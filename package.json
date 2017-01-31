@@ -1,12 +1,13 @@
 {
-  "name": "elm-webpack-starter",
-  "description": "Webpack setup for writing Elm apps",
-  "version": "0.8.4",
+  "name": "elm-lifegame",
+  "description": "Elm Lifegame",
+  "version": "1.0.0",
   "license": "MIT",
-  "author": "Peter Morawiec",
+  "author": "y0za",
+  "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/moarwick/elm-webpack-starter"
+    "url": "https://github.com/y0za/elm-lifegame"
   },
   "scripts": {
     "start": "webpack-dev-server --hot --inline",
