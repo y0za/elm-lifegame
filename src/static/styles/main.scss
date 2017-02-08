@@ -3,3 +3,16 @@ $icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/';
 @import '~bootstrap-sass/assets/stylesheets/_bootstrap.scss';
 
 // can add Boostrap overrides, additional Sass/CSS below...
+
+.board {
+  td {
+    height: 30px;
+    width: 30px;
+  }
+  .dead {
+    background-color: #000;
+  }
+  .alive {
+    background-color: #0f0;
+  }
+}
