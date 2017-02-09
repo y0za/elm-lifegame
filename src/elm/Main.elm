@@ -1,8 +1,12 @@
 module Main exposing (..)
+
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import List
+import Dict
+import Maybe
+import Core
 
 
 -- APP
@@ -13,43 +17,23 @@ main =
 
 -- MODEL
 type alias Model =
-  { board : List (List Bool)
+  { board : Core.Board
   }
 
 model : Model
 model =
-  { board = List.repeat 8 <| List.repeat 8 False
+  { board = Core.initBoard 8 8 False
   }
 
 
 -- UPDATE
-type Msg = ToggleCell Int Int
+type Msg = ToggleCell Core.Position
 
 update : Msg -> Model -> Model
 update msg model =
   case msg of
-    ToggleCell y x ->
-      { model | board =
-        model.board
-          |> List.indexedMap
-            (\index row ->
-              if index == y then
-                toggleCellInRow row x
-              else
-                row
-            )
-      }
-
-toggleCellInRow : List Bool -> Int -> List Bool
-toggleCellInRow row target =
-  let
-    toggle index state =
-      if index == target then
-        not state
-      else
-        state
-  in
-    List.indexedMap toggle row
+    ToggleCell position ->
+      { model | board = Core.toggleCell model.board position }
 
 
 -- VIEW
@@ -61,24 +45,26 @@ view model =
     boardView model.board
   ]
 
-boardView : List (List Bool) -> Html Msg
+boardView : Core.Board -> Html Msg
 boardView board =
-  Html.table [ class "board" ] <|
-    List.indexedMap
-      (\y row ->
-        tr [] (
-          row |> List.indexedMap
-            (\x state -> td [ class <| stateClass state, onClick <| ToggleCell y x ] [])
-        )
+  Core.range (Core.height board)
+    |> List.map
+      (\y ->
+        tr []
+          (Core.range (Core.width board) |> List.map
+            (\x -> td [ class <| stateClass <| Dict.get (y, x) board
+                      , onClick <| ToggleCell (y, x)
+                      ] [])
+          )
       )
-      board
+    |> Html.table [ class "board" ]
 
-stateClass : Bool -> String
+stateClass : Maybe Core.State -> String
 stateClass state =
-  if state then
-    "alive"
-  else
-    "dead"
+  case state of
+    Just True  -> "alive"
+    Just False -> "dead"
+    _          -> "empty"
 
 
 -- CSS STYLES
