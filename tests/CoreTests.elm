@@ -1,18 +1,18 @@
-module CoreTests exposing (aliveTests)
+module CoreTests exposing (ruleTests)
 
 import Test exposing (..)
 import Expect
 import Core exposing (..)
 
 
-aliveTests : Test
-aliveTests =
-  describe "Core.alive"
-    [ test "alive1" (\_ -> alive True 2 |> Expect.equal True)
-    , test "alive2" (\_ -> alive True 3 |> Expect.equal True)
-    , test "alive3" (\_ -> alive False 3 |> Expect.equal True)
-    , test "dead1" (\_ -> alive True 1 |> Expect.equal False)
-    , test "dead2" (\_ -> alive True 4 |> Expect.equal False)
-    , test "dead3" (\_ -> alive False 2 |> Expect.equal False)
-    , test "dead4" (\_ -> alive False 4 |> Expect.equal False)
+ruleTests : Test
+ruleTests =
+  describe "Core.rule"
+    [ test "alive1" (\_ -> rule True 2 |> Expect.equal True)
+    , test "alive2" (\_ -> rule True 3 |> Expect.equal True)
+    , test "alive3" (\_ -> rule False 3 |> Expect.equal True)
+    , test "dead1" (\_ -> rule True 1 |> Expect.equal False)
+    , test "dead2" (\_ -> rule True 4 |> Expect.equal False)
+    , test "dead3" (\_ -> rule False 2 |> Expect.equal False)
+    , test "dead4" (\_ -> rule False 4 |> Expect.equal False)
     ]

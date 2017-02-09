@@ -1,8 +1,12 @@
 module Core exposing (..)
 
+type alias Position = (Int Int)
+type alias State = Bool
 
-alive : Bool -> Int -> Bool
-alive before around =
-  case before of
-    True -> around == 2 || around == 3
-    False -> around == 3
+rule : State -> Int -> State
+rule state aroundAlives =
+  case (state, aroundAlives) of
+    (True, 2)  -> True
+    (True, 3)  -> True
+    (False, 3) -> True
+    _          -> False

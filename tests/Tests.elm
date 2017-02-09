@@ -1,9 +1,9 @@
 module Tests exposing (..)
 
-import Test
+import Test exposing (..)
 import CoreTests
 
 
 all : Test
 all =
-  CoreTests.aliveTests
+  CoreTests.ruleTests
