@@ -6,6 +6,7 @@ import Maybe
 
 type alias State = Bool
 type alias Position = (Int, Int)
+type alias PositionOffset = (Int, Int)
 type alias Cell = (Position, State)
 type alias Board = Dict.Dict Position State
 
@@ -35,6 +36,33 @@ initBoard height width state =
     |> List.concat
     |> Dict.fromList
 
+aroundOffsets : List PositionOffset
+aroundOffsets =
+  [ (-1, -1), (-1, 0), (-1, 1)
+  , ( 0, -1),          ( 0, 1)
+  , ( 1, -1), ( 1, 0), ( 1, 1)
+  ]
+
+aroundPositions : Position -> List Position
+aroundPositions (x, y) =
+  List.map (\(dx, dy) -> (x + dx, y + dy)) aroundOffsets
+
+
+aroundAlives : Board -> Position -> Int
+aroundAlives board pos =
+  aroundPositions pos
+    |> List.map (\pos -> Dict.get pos board)
+    |> List.map (Maybe.withDefault False)
+    |> List.filter identity
+    |> List.length
+
+nextState : Board -> Cell -> State
+nextState board (pos, state) =
+  rule state (aroundAlives board pos)
+
+nextBoard : Board -> Board
+nextBoard board =
+  Dict.map (nextState board |> curry) board
 
 toggleCell : Board -> Position -> Board
 toggleCell board pos =
