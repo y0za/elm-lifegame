@@ -34,6 +34,7 @@ init =
 -- UPDATE
 type Msg
   = Start
+  | Stop
   | Update Time
   | ToggleCell Core.Position
 
@@ -42,6 +43,8 @@ update msg model =
   case msg of
     Start ->
       ({ model | running = True }, Cmd.none)
+    Stop ->
+      ({ model | running = False }, Cmd.none)
     Update _ ->
       ({ model | board = Core.nextBoard model.board }, Cmd.none)
     ToggleCell position ->
@@ -68,6 +71,7 @@ view model =
   div [ class "container", style [("margin-top", "30px"), ("text-align", "center")] ]
     [ boardView model.board
     , button [ onClick Start ] [ text "Start" ]
+    , button [ onClick Stop ] [ text "Stop" ]
     ]
 
 boardView : Core.Board -> Html Msg
