@@ -3,6 +3,7 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Time exposing (Time, millisecond)
 import List
 import Dict
 import Maybe
@@ -10,30 +11,53 @@ import Core
 
 
 -- APP
-main : Program Never Model Msg
 main =
-  Html.beginnerProgram { model = model, view = view, update = update }
+  Html.program
+    { init = init
+    , view = view
+    , update = update
+    , subscriptions = subscriptions
+    }
 
 
 -- MODEL
 type alias Model =
   { board : Core.Board
+  , running : Bool
   }
 
-model : Model
-model =
-  { board = Core.initBoard 8 8 False
-  }
+init : (Model, Cmd Msg)
+init =
+  (Model (Core.initBoard 8 8 False) False, Cmd.none)
 
 
 -- UPDATE
-type Msg = ToggleCell Core.Position
+type Msg
+  = Start
+  | Update Time
+  | ToggleCell Core.Position
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
+    Start ->
+      ({ model | running = True }, Cmd.none)
+    Update _ ->
+      ({ model | board = Core.nextBoard model.board }, Cmd.none)
     ToggleCell position ->
-      { model | board = Core.toggleCell model.board position }
+      ({ model | board = Core.toggleCell model.board position }, Cmd.none)
+
+
+
+-- SUBSCRIPTIONS
+subscriptions : Model -> Sub Msg
+subscriptions model =
+  case model.running of
+    True ->
+      Time.every (500 * millisecond) Update
+    False ->
+      Sub.none
+
 
 
 -- VIEW
@@ -41,9 +65,10 @@ update msg model =
 -- CSS can be applied via class names or inline style attrib
 view : Model -> Html Msg
 view model =
-  div [ class "container", style [("margin-top", "30px"), ( "text-align", "center" )] ][    -- inline CSS (literal)
-    boardView model.board
-  ]
+  div [ class "container", style [("margin-top", "30px"), ("text-align", "center")] ]
+    [ boardView model.board
+    , button [ onClick Start ] [ text "Start" ]
+    ]
 
 boardView : Core.Board -> Html Msg
 boardView board =
