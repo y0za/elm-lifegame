@@ -35,6 +35,7 @@ init =
 type Msg
   = Start
   | Stop
+  | Reset
   | Update Time
   | ToggleCell Core.Position
 
@@ -45,6 +46,8 @@ update msg model =
       ({ model | running = True }, Cmd.none)
     Stop ->
       ({ model | running = False }, Cmd.none)
+    Reset ->
+      ({ model | board = Core.initBoard 8 8 False, running = False }, Cmd.none)
     Update _ ->
       ({ model | board = Core.nextBoard model.board }, Cmd.none)
     ToggleCell position ->
@@ -72,6 +75,7 @@ view model =
     [ boardView model.board
     , button [ onClick Start ] [ text "Start" ]
     , button [ onClick Stop ] [ text "Stop" ]
+    , button [ onClick Reset ] [ text "Reset" ]
     ]
 
 boardView : Core.Board -> Html Msg
